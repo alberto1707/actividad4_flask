@@ -1,5 +1,6 @@
 import os
 import uuid
+from markupsafe import Markup
 from .extensions import appbuilder
 from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
@@ -28,6 +29,10 @@ class CategoriaModelView(ModelView):
     edit_columns = ["nombre", "descripcion", "imagen", "estado"]
     show_columns = ["nombre", "descripcion", "imagen", "estado", "creado_en","actualizado_en"]
     
+    formatters_columns = {
+        "imagen": lambda img: Markup(f'<img src="/static/uploads/{img}" height="50">') if img else ''
+    }
+    
     add_form_extra_fields = {
         "imagen": ImageUploadField(imagemanager=ImageManager(namegen=short_namegen))
     }
@@ -50,6 +55,10 @@ class ProductoModelView(ModelView):
     add_columns = ["nombre", "descripcion","precio","categoria", "imagen", "estado"]
     edit_columns = ["nombre", "descripcion","precio","categoria", "imagen", "estado"]
     show_columns = ["nombre", "descripcion", "precio", "imagen", "estado", "creado_en","actualizado_en"]
+    
+    formatters_columns = {
+        "imagen": lambda img: Markup(f'<img src="/static/uploads/{img}" height="50">') if img else ''
+    }
     
     add_form_extra_fields = {
         "imagen": ImageUploadField(imagemanager=ImageManager(namegen=short_namegen))
