@@ -1,7 +1,17 @@
+import os
+import uuid
 from .extensions import appbuilder
 from flask_appbuilder import ModelView
 from flask_appbuilder.models.sqla.interface import SQLAInterface
+from flask_appbuilder.upload import ImageUploadField
+from flask_appbuilder.filemanager import ImageManager, secure_filename
 from .models import Categoria, Producto
+
+
+def short_namegen(file_data):
+    _, ext = os.path.splitext(secure_filename(file_data.filename))
+    return str(uuid.uuid1()) + ext
+
 
 class CategoriaModelView(ModelView):
     datamodel = SQLAInterface(Categoria)
@@ -13,11 +23,17 @@ class CategoriaModelView(ModelView):
         "actualizado_en": "Actualizado en",
     }
 
-    list_columns= ["nombre", "descripcion", "estado", "creado_en"]
-    
+    list_columns= ["nombre", "descripcion", "imagen", "estado", "creado_en"]
     add_columns = ["nombre", "descripcion", "imagen", "estado"]
     edit_columns = ["nombre", "descripcion", "imagen", "estado"]
     show_columns = ["nombre", "descripcion", "imagen", "estado", "creado_en","actualizado_en"]
+    
+    add_form_extra_fields = {
+        "imagen": ImageUploadField(imagemanager=ImageManager(namegen=short_namegen))
+    }
+    edit_form_extra_fields = {
+        "imagen": ImageUploadField(imagemanager=ImageManager(namegen=short_namegen))
+    }
 
 
 class ProductoModelView(ModelView):
@@ -30,10 +46,17 @@ class ProductoModelView(ModelView):
                     "estado": "Estado",
                     "creado_en": "Creado en",
                     "actualizado_en":"Actualizado en"}
-    list_columns= ["nombre", "precio", "categoria", "estado"]
+    list_columns= ["nombre", "precio", "categoria", "imagen", "estado"]
     add_columns = ["nombre", "descripcion","precio","categoria", "imagen", "estado"]
     edit_columns = ["nombre", "descripcion","precio","categoria", "imagen", "estado"]
     show_columns = ["nombre", "descripcion", "precio", "imagen", "estado", "creado_en","actualizado_en"]
+    
+    add_form_extra_fields = {
+        "imagen": ImageUploadField(imagemanager=ImageManager(namegen=short_namegen))
+    }
+    edit_form_extra_fields = {
+        "imagen": ImageUploadField(imagemanager=ImageManager(namegen=short_namegen))
+    }
 
 appbuilder.add_view(
         CategoriaModelView,
